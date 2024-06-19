@@ -1,0 +1,16 @@
+<%- include('base_header') -%>
+
+<form method="post" action="/persist">
+    Data to persist in database: <br/>
+    Name: <input name="name" /><br/>
+    CPF: <input name="cpf" /><br/>
+    Database:
+    <select name="bd_type">
+        <option value="pg">PostgreSQL</option>
+        <option value="mongo">MongoDB</option>
+        <option value="mariadb">MariaDB</option>
+    </select><br/>
+    <input type="submit" value="submit" />
+</form>
+
+<%- include('base_footer') -%>
