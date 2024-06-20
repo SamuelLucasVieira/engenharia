@@ -5,7 +5,7 @@ import { Client as PGClient } from 'pg';
 
 // Define the UserDAO interface
 interface UserDAO {
-    insert_user(name: string, cpf: string): Promise<void>;
+    insert_user(natureza_chamado: string, descricao: string): Promise<void>;
 }
 
 // PostgreSQL implementation
@@ -18,14 +18,14 @@ class UserDAOPG implements UserDAO {
         port: 5432,
     };
 
-    async insert_user(name: string, cpf: string) {
+    async insert_user(natureza_chamado: string, descricao: string) {
         const client = new PGClient(this.dbConfig);
         try {
             await client.connect();
             console.log('Connected to PostgreSQL');
 
-            const insertQuery = 'INSERT INTO usuario(nome, cpf) VALUES ($1, $2)';
-            const result = await client.query(insertQuery, [name, cpf]);
+            const insertQuery = 'INSERT INTO service(natureza_chamado, descricao) VALUES ($1, $2)';
+            const result = await client.query(insertQuery, [natureza_chamado, descricao]);
             console.log('Data inserted successfully:', result.rowCount);
         } catch (error) {
             console.error('Error inserting data into PostgreSQL', error);
@@ -42,7 +42,7 @@ class UserDAOPG implements UserDAO {
             await client.connect();
             console.log('Connected to PostgreSQL');
 
-            const query = 'SELECT nome FROM usuario';
+            const query = 'SELECT nome FROM service';
             const result = await client.query(query);
             const users: string[] = result.rows.map(row => row.nome);
             console.log('Data fetched successfully:', users);
@@ -63,7 +63,7 @@ class UserDAOMongo implements UserDAO {
     private dbConfig: string = process.env.MONGO_DB_CONFIG || 'mongodb+srv://root:root@cluster0.0d0gtyq.mongodb.net/uml?retryWrites=true&w=majority&authSource=admin';
     private dbName: string = 'uml';
 
-    async insert_user(name: string, cpf: string): Promise<void> {
+    async insert_user(natureza_chamado: string, descricao: string): Promise<void> {
         const client = new MongoClient(this.dbConfig);
 
         try {
@@ -73,7 +73,7 @@ class UserDAOMongo implements UserDAO {
             const db = client.db(this.dbName);
             const collection = db.collection('uml');
             
-            const result = await collection.insertOne({ nome: name, cpf: cpf });
+            const result = await collection.insertOne({ natureza_chamado: natureza_chamado, descricao: descricao });
             console.log('Data inserted successfully:', result.insertedId);
         } catch (error) {
             console.error('Error inserting data into MongoDB', error);
@@ -92,7 +92,7 @@ class UserDAOMongo implements UserDAO {
             console.log('Connected to MongoDB');
             
             const db = client.db(this.dbName);
-            const collection = db.collection('usuario');
+            const collection = db.collection('uml');
             
             const users = await collection.find().toArray();
             const userNames: string[] = users.map(user => user.nome);
@@ -119,14 +119,14 @@ class UserDAOMariaDB implements UserDAO {
         port: 3306,
     };
 
-    async insert_user(name: string, cpf: string) {
+    async insert_user(natureza_chamado: string, descricao: string) {
         const pool = mariadb.createPool(this.dbConfig);
         let conn;
         try {
             conn = await pool.getConnection();
             console.log('Connected to MariaDB');
-            const query = 'INSERT INTO usuario(nome, cpf) VALUES (?, ?)';
-            const result = await conn.query(query, [name, cpf]);
+            const query = 'INSERT INTO service(natureza_chamado, descricao) VALUES (?, ?)';
+            const result = await conn.query(query, [natureza_chamado, descricao]);
             console.log('Data inserted successfully:', result);
         } catch (error) {
             console.error('Error inserting data into MariaDB', error);
@@ -143,7 +143,7 @@ class UserDAOMariaDB implements UserDAO {
         try {
             conn = await pool.getConnection();
             console.log('Connected to MariaDB');
-            const query = 'SELECT nome FROM usuario';
+            const query = 'SELECT nome FROM service';
             const rows = await conn.query(query);
             const userNames: string[] = rows.map((row: { nome: any; }) => row.nome);
             console.log('Data fetched successfully:', userNames);

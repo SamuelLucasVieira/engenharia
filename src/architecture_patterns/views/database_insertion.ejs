@@ -1,9 +1,26 @@
 <%- include('base_header') -%>
 
+<style>
+    /* Estilo para o input de descrição */
+    textarea[name="descricao"] {
+        width: 30%; /* Define a largura para ocupar toda a largura do formulário */
+        height: 300px; /* Define a altura desejada para o campo de entrada */
+        padding: 2px; /* Adiciona espaço interno para o texto não ficar colado nas bordas */
+        box-sizing: border-box; /* Mantém o tamanho total incluindo padding e bordas */
+        display: block; /* Garante que o input seja exibido como um bloco */
+        text-align: justify;
+    }
+</style>
+
 <form method="post" action="/persist">
     Data to persist in database: <br/>
-    Name: <input name="name" /><br/>
-    CPF: <input name="cpf" /><br/>
+    Natureza do chamado: 
+    <select name="natureza_chamado">
+        <option value="duvida">Dúvida</option>
+        <option value="resolucao">Resolução de Problemas</option>
+    </select><br/>
+    Descrição:<br/>
+    <textarea type="text" name="descricao"></textarea><br/>
     Database:
     <select name="bd_type">
         <option value="pg">PostgreSQL</option>

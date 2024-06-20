@@ -79,13 +79,13 @@ async function capitalize_text_handler(req:any,res:any){
 
 /* function to perform text capitalization through web service */
 async function persist_name_handler(req:any,res:any){
-    let name = req.body.name;
-    let cpf = req.body.cpf;
+    let natureza_chamado = req.body.natureza_chamado;
+    let descricao = req.body.descricao;
     let bd_type = req.body.bd_type;
-    console.log(name);
-    console.log(cpf);
+    console.log(natureza_chamado);
+    console.log(descricao);
     console.log(bd_type);
-    let url = 'http://localhost:5000/persistence?nome='+name+'&cpf='+cpf+'&bd_type='+bd_type;
+    let url = 'http://localhost:5000/persistence?nome='+natureza_chamado+'&cpf='+descricao+'&bd_type='+bd_type;
     axios.get(url)
             .then((response: AxiosResponse) => {
                 res.render('response.ejs', {service_response: response.data})
