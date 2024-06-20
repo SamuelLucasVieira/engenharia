@@ -114,7 +114,7 @@ async function persist_name_handler(req:any,res:any){
     console.log(natureza_chamado);
     console.log(descricao);
     console.log(bd_type);
-    let url = 'http://localhost:5000/persistence?nome='+natureza_chamado+'&cpf='+descricao+'&bd_type='+bd_type;
+    let url = 'http://localhost:5000/persistence?natureza_chamado='+natureza_chamado+'&descricao='+descricao+'&bd_type='+bd_type;
     axios.get(url)
             .then((response: AxiosResponse) => {
                 res.render('response.ejs', {service_response: response.data})
@@ -131,12 +131,11 @@ async function persist_name_handler(req:any,res:any){
                 console.error('Response headers:', error.response.headers);
             } else if (error.request) {
                 const data = `Natureza do Chamado: ${natureza_chamado}, Descrição: ${descricao}, BD Type: ${bd_type}\nNo response received\n\n`;
-                fileWriter.writeToFile(data);
+                
                 // no response was sent
                 console.error('Request:', error.request);
             } else {
-                const data = `Name: ${name}, CPF: ${cpf}, BD Type: ${bd_type}\nError: ${error.message}\n\n`;
-                fileWriter.writeToFile(data);
+                const data = `Natureza do Chamado: ${natureza_chamado}, Descrição: ${descricao}, BD Type: ${bd_type}\nError: ${error.message}\n\n`;
                 // Some processing error
                 console.error('Error:', error.message);
             }

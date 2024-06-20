@@ -1,7 +1,0 @@
-Name: jaime augusto, CPF: 40430320211, BD Type: mongo
-Name: Claudio Nando, CPF: 80870760644, BD Type: mariadb
-Name: Nando Miro, CPF: 55544433322, BD Type: mongo
-Name: Mauro Lucio, CPF: 78765599900, BD Type: mariadb
-Name: Kaique nando, CPF: 79766644455, BD Type: mariadb
-Response Status: 200
-Response Data: "Data successfully inserted"
