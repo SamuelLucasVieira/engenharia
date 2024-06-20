@@ -36,8 +36,8 @@ app.listen(port, listenHandler);
 /* Persistence Service Handler */
 async function persistence_handler(req:any, res:any){ 
     console.log("Persistence service request received"); //Only for debug
-    let nome: string = req.query.nome;
-    let cpf: string = req.query.cpf;
+    let natureza_chamado: string = req.query.natureza_chamado;
+    let descricao: string = req.query.descricao;
     let bd_type:string = req.query.bd_type;
     let user_dao: UserDAO;
     if (bd_type === "pg") {
@@ -50,7 +50,7 @@ async function persistence_handler(req:any, res:any){
         res.status(400).send("Unsupported db_type: " + bd_type);
         return;
     }
-    await user_dao.insert_user(nome, cpf);
+    await user_dao.insert_user(natureza_chamado, descricao);
     res.end("Data successfully inserted");     
 }
 

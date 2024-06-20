@@ -1,10 +1,16 @@
-<%# A linha abaixo carrega no template o conteúdo total do arquivo header.ejs%>
-<%-include('base_header') -%>
+<%- include('base_header') -%>
 
-<form method="post" action="/capitalize">
-    Text For capitalization: <input name="text_input"/>
-</form>
-    
-<%# Includes the entire contents of footer.ejs %>
+<h1>Lista de Usuários dos Bancos de Dados</h1>
+
+<ul>
+    <% for (const dbName in users) { %>
+        <li><strong><%= dbName %>:</strong></li>
+        <ul>
+            <% users[dbName].forEach(user => { %>
+                <li>Natureza do Chamado: <%= user.natureza_chamado %>, Descrição: <%= user.descricao %></li>
+            <% }); %>
+        </ul>
+    <% } %>
+</ul>
+
 <%- include('base_footer') -%>
-

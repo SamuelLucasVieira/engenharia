@@ -2,7 +2,6 @@
 Basic client app example.
 Author: Fabrício G. M. de Carvalho, DSc.
 */
-
 /* express web framework */
 const express = require('express');
 
@@ -15,6 +14,7 @@ import { AxiosResponse, AxiosError } from 'axios';
 
 /* fs module to write to file */
 import fs from 'fs';
+import { UserDAOMariaDB, UserDAOMongo, UserDAOPG } from './models/dao';
 
 const app = express();
 const port = 5003;
@@ -33,19 +33,17 @@ app.use(express.static('src/public'));
 app.post('/capitalize', capitalize_text_handler);
 app.post('/persist', persist_name_handler);
 app.get('/', root_client_handler);
-app.get('/persist_form', persist_client_handler);
+app.get('/persist_form', get_user_list_handler);
 app.get('/view_data', view_data_handler);
 app.listen(port, listenHandler);
 
 /* Function to return text capitalization interface */
 function root_client_handler(req: any, res: any) {
-    res.render('text_capitalization.ejs');
+    res.render('database_insertion.ejs');
 }
 
 /* Function to return text persistence interface */
-function persist_client_handler(req: any, res: any) {
-    res.render('database_insertion.ejs');
-}
+
 
 /* Singleton class to handle file writing */
 class FileWriterSingleton {
@@ -82,7 +80,7 @@ async function capitalize_text_handler(req: any, res: any) {
     axios
         .get(url)
         .then((response: AxiosResponse) => {
-            res.render('response.ejs', { service_response: response.data.str_out });
+            res.render('./response.ejs', { service_response: response.data.str_out });
             // Handle successful response
             console.log('Response status:', response.status);
             console.log('Response data:', response.data);
@@ -104,6 +102,31 @@ async function capitalize_text_handler(req: any, res: any) {
         });
 }
 
+async function get_user_list_handler(req: any, res: any) {
+    try {
+        // Lógica para obter a lista de usuários de todos os bancos de dados
+        const pgDao = new UserDAOPG();
+        const mongoDao = new UserDAOMongo();
+        const mariaDao = new UserDAOMariaDB();
+
+        const usersPG = await pgDao.listUser();
+        const usersMongo = await mongoDao.listUser();
+        const usersMariaDB = await mariaDao.listUser();
+
+        const users = {
+            PostgreSQL: usersPG,
+            MongoDB: usersMongo,
+            MariaDB: usersMariaDB
+        };
+
+        // Renderiza o template EJS com os dados dos usuários
+        res.render('text_capitalization.ejs', { users });
+
+    } catch (error) {
+        console.error('Erro ao obter lista de usuários:', error);
+        res.status(500).send('Erro ao processar a requisição');
+    }
+}
 /* function to perform text capitalization through web service */
 async function persist_name_handler(req: any, res: any) {
     let natureza_chamado = req.body.natureza_chamado;

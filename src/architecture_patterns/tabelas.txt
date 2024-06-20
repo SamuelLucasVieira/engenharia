@@ -2,11 +2,9 @@
 PG
 CREATE TABLE IF NOT EXISTS service (
     id SERIAL PRIMARY KEY,
-    natureza_chamado VARCHAR(20) NULL,
+    natureza_chamado VARCHAR(40) NOT NULL,
     descricao VARCHAR (600)  NOT NULL
 );
-ALTER TABLE service
-    ADD CONSTRAINT natureza_chamado_not_null CHECK (natureza_chamado <> '');
 ALTER TABLE service
     ADD CONSTRAINT descricao_not_null CHECK (descricao <> '');
 
@@ -19,10 +17,7 @@ CREATE TABLE IF NOT EXISTS service (
     natureza_chamado VARCHAR(20) NOT NULL,
     descricao VARCHAR(600) NOT NULL
 );
--- Exemplo de restrição de CHECK personalizada para natureza_chamado
-ALTER TABLE service
-    ADD CONSTRAINT natureza_chamado_not_null CHECK (natureza_chamado <> '');
 
--- Exemplo de restrição de CHECK personalizada para descricao
+
 ALTER TABLE service
     ADD CONSTRAINT descricao_not_null CHECK (descricao <> '');

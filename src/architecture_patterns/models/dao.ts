@@ -2,15 +2,15 @@ import * as mariadb from 'mariadb';
 import { MongoClient } from 'mongodb';
 import { Client as PGClient } from 'pg';
 
-
 // Define the UserDAO interface
 interface UserDAO {
     insert_user(natureza_chamado: string, descricao: string): Promise<void>;
+    listUser(): Promise<{ natureza_chamado: string; descricao: string; }[]>;
 }
 
 // PostgreSQL implementation
 class UserDAOPG implements UserDAO {
-    dbConfig = {
+    private dbConfig = {
         user: 'postgres',
         host: 'localhost',
         database: 'uml',
@@ -21,6 +21,10 @@ class UserDAOPG implements UserDAO {
     async insert_user(natureza_chamado: string, descricao: string) {
         const client = new PGClient(this.dbConfig);
         try {
+            if (!descricao) {
+                throw new Error('Descricao cannot be null or empty');
+            }
+
             await client.connect();
             console.log('Connected to PostgreSQL');
 
@@ -36,15 +40,20 @@ class UserDAOPG implements UserDAO {
         }
     }
 
-    async listUser(): Promise<string[]> {
+    async listUser(): Promise<{ natureza_chamado: string; descricao: string; }[]> {
         const client = new PGClient(this.dbConfig);
         try {
             await client.connect();
             console.log('Connected to PostgreSQL');
 
-            const query = 'SELECT nome FROM service';
+            const query = 'SELECT natureza_chamado, descricao FROM service';
             const result = await client.query(query);
-            const users: string[] = result.rows.map(row => row.nome);
+
+            const users = result.rows.map(row => ({
+                natureza_chamado: row.natureza_chamado,
+                descricao: row.descricao
+            }));
+
             console.log('Data fetched successfully:', users);
             return users;
         } catch (error) {
@@ -58,7 +67,6 @@ class UserDAOPG implements UserDAO {
 }
 
 // MongoDB implementation
-
 class UserDAOMongo implements UserDAO {
     private dbConfig: string = process.env.MONGO_DB_CONFIG || 'mongodb+srv://root:root@cluster0.0d0gtyq.mongodb.net/uml?retryWrites=true&w=majority&authSource=admin';
     private dbName: string = 'uml';
@@ -69,11 +77,11 @@ class UserDAOMongo implements UserDAO {
         try {
             await client.connect();
             console.log('Connected to MongoDB');
-            
+
             const db = client.db(this.dbName);
             const collection = db.collection('uml');
-            
-            const result = await collection.insertOne({ natureza_chamado: natureza_chamado, descricao: descricao });
+
+            const result = await collection.insertOne({ natureza_chamado, descricao });
             console.log('Data inserted successfully:', result.insertedId);
         } catch (error) {
             console.error('Error inserting data into MongoDB', error);
@@ -84,18 +92,22 @@ class UserDAOMongo implements UserDAO {
         }
     }
 
-    async listUser(): Promise<string[]> {
+    async listUser(): Promise<{ natureza_chamado: string; descricao: string; }[]> {
         const client = new MongoClient(this.dbConfig);
 
         try {
             await client.connect();
             console.log('Connected to MongoDB');
-            
+
             const db = client.db(this.dbName);
             const collection = db.collection('uml');
-            
+
             const users = await collection.find().toArray();
-            const userNames: string[] = users.map(user => user.nome);
+            const userNames: { natureza_chamado: string; descricao: string; }[] = users.map(user => ({
+                natureza_chamado: user.natureza_chamado,
+                descricao: user.descricao
+            }));
+
             console.log('Data fetched successfully:', userNames);
             return userNames;
         } catch (error) {
@@ -108,10 +120,9 @@ class UserDAOMongo implements UserDAO {
     }
 }
 
-
 // MariaDB implementation
 class UserDAOMariaDB implements UserDAO {
-    dbConfig = {
+    private dbConfig = {
         host: 'localhost',
         user: 'root',
         password: 'root',
@@ -125,6 +136,7 @@ class UserDAOMariaDB implements UserDAO {
         try {
             conn = await pool.getConnection();
             console.log('Connected to MariaDB');
+
             const query = 'INSERT INTO service(natureza_chamado, descricao) VALUES (?, ?)';
             const result = await conn.query(query, [natureza_chamado, descricao]);
             console.log('Data inserted successfully:', result);
@@ -137,15 +149,21 @@ class UserDAOMariaDB implements UserDAO {
         }
     }
 
-    async listUser(): Promise<string[]> {
+    async listUser(): Promise<{ natureza_chamado: string; descricao: string; }[]> {
         const pool = mariadb.createPool(this.dbConfig);
         let conn;
         try {
             conn = await pool.getConnection();
             console.log('Connected to MariaDB');
-            const query = 'SELECT nome FROM service';
+
+            const query = 'SELECT natureza_chamado, descricao FROM service';
             const rows = await conn.query(query);
-            const userNames: string[] = rows.map((row: { nome: any; }) => row.nome);
+
+            const userNames: { natureza_chamado: string; descricao: string; }[] = rows.map((row: { natureza_chamado: string; descricao: string; }) => ({
+                natureza_chamado: row.natureza_chamado,
+                descricao: row.descricao
+            }));
+
             console.log('Data fetched successfully:', userNames);
             return userNames;
         } catch (error) {
@@ -158,7 +176,6 @@ class UserDAOMariaDB implements UserDAO {
     }
 }
 
-
 export {
     UserDAO, UserDAOPG, UserDAOMongo, UserDAOMariaDB
-}
+};
