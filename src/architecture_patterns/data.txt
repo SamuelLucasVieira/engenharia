@@ -1,0 +1,12 @@
+Natureza do Chamado: resolucao, Descrição: Consegui resovlver o problema do singleton, BD Type: mongo
+Response Status: 200
+Response Data: "Data successfully inserted"
+
+Natureza do Chamado: resolucao, Descrição: Consegui resovlver o problema do singleton, BD Type: mongo
+Response Status: 200
+Response Data: "Data successfully inserted"
+
+Natureza do Chamado: duvida, Descrição: Estou com dúvida, a mulher tem cabelo?, BD Type: mariadb
+Response Status: 504
+Response Data: "Error occurred while trying to proxy: localhost:5000/?natureza_chamado=duvida&descricao=Estou%20com%20d%C3%BAvida,%20a%20mulher%20tem%20cabelo?&bd_type=mariadb"
+
