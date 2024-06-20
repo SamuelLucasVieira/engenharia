@@ -11,15 +11,6 @@ interface UserDAO{
     listUser(users: string[]):any;
 }
 
-
-
-
-
-
-
-
-
-
 class UserDAOPG implements UserDAO{
     //Database configuration
     dbConfig:Object = {

@@ -2,6 +2,7 @@ import * as mariadb from 'mariadb';
 import { MongoClient } from 'mongodb';
 import { Client as PGClient } from 'pg';
 
+
 // Define the UserDAO interface
 interface UserDAO {
     insert_user(name: string, cpf: string): Promise<void>;
@@ -38,27 +39,31 @@ class UserDAOPG implements UserDAO {
 
 // MongoDB implementation
 class UserDAOMongo implements UserDAO {
-    dbConfig = 'mongodb://localhost:27017';
-    dbName = 'uml';
+    private dbConfig: string = process.env.MONGO_DB_CONFIG || 'mongodb+srv://root:root@cluster0.0d0gtyq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    private dbName: string = 'uml';
 
-    async insert_user(name: string, cpf: string) {
+    async insert_user(name: string, cpf: string): Promise<void> {
         const client = new MongoClient(this.dbConfig);
+
         try {
             await client.connect();
             console.log('Connected to MongoDB');
+            
             const db = client.db(this.dbName);
             const collection = db.collection('usuario');
+            
             const result = await collection.insertOne({ nome: name, cpf: cpf });
             console.log('Data inserted successfully:', result.insertedId);
         } catch (error) {
             console.error('Error inserting data into MongoDB', error);
             throw error;
         } finally {
-            console.log("MongoDB connection closed");
             await client.close();
+            console.log('MongoDB connection closed');
         }
     }
 }
+
 
 // MariaDB implementation
 class UserDAOMariaDB implements UserDAO {
