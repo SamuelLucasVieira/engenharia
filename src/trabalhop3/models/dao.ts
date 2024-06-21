@@ -68,7 +68,7 @@ class UserDAOPG implements UserDAO {
 
 // MongoDB implementation
 class UserDAOMongo implements UserDAO {
-    private dbConfig: string = process.env.MONGO_DB_CONFIG || 'mongodb+srv://root:root@cluster0.0d0gtyq.mongodb.net/uml?retryWrites=true&w=majority&authSource=admin';
+    private dbConfig:any= process.env.MONGO_DB_CONFIG 
     private dbName: string = 'uml';
 
     async insert_user(natureza_chamado: string, descricao: string): Promise<void> {
